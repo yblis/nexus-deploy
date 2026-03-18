@@ -94,7 +94,7 @@ Pour débloquer davantage d'agents et de fonctionnalités, uploadez un fichier d
 | Enterprise | 500 | 50 | + SSO, M365, Politiques |
 | Enterprise+ | 1 000 | 100 | Toutes |
 
-Contactez-nous pour obtenir une licence : **contact@example.com**
+Contactez-nous pour obtenir une licence : **contact@gensys.fr*
 
 ## Sauvegarde
 

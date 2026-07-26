@@ -53,7 +53,11 @@ services:
       NEXUS_DOMAIN: ${NEXUS_DOMAIN}
       NEXUS_SERVER_IP: ${NEXUS_SERVER_IP:-}
     volumes:
-      - nexus-binaries:/app/binaries
+      # Pas de volume sur /app/binaries : les binaires des agents et l'APK Android
+      # sont livres dans l'image. Un volume nomme masque definitivement le contenu
+      # de l'image apres sa premiere creation — Docker ne le repeuple que s'il est
+      # vide — donc les agents restaient figes a la version du premier deploiement.
+      # Rien n'ecrit dans ce repertoire a l'execution, il est uniquement lu.
       - nexus-tools:/app/tools
       - nexus-branding:/app/branding
       - nexus-applications:/app/applications
@@ -82,7 +86,6 @@ services:
 
 volumes:
   nexus-db-data:
-  nexus-binaries:
   nexus-tools:
   nexus-branding:
   nexus-applications:

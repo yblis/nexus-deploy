@@ -115,7 +115,15 @@ docker compose --profile relay pull
 docker compose --profile relay up -d
 ```
 
-**Firewall** : ouvrez les ports UDP 51821 (QUIC), UDP 3478 (STUN) et TCP 8443 (WSS de secours) vers le serveur.
+**Firewall (UFW)** : ouvrez les ports du relais en entrée :
+
+```bash
+sudo ufw allow 51821/udp comment 'nexus-relay QUIC'
+sudo ufw allow 3478/udp comment 'nexus-relay STUN'
+sudo ufw allow 8443/tcp comment 'nexus-relay WSS fallback'
+```
+
+> **Note** : Docker publie les ports directement dans iptables et contourne UFW — les ports du relais seront joignables même sans ces règles. Elles gardent votre politique firewall cohérente et documentée. Si un firewall en amont filtre le trafic (cloud provider, routeur), ouvrez-y aussi ces trois ports. Tant que le profil `relay` n'est pas démarré, rien n'écoute sur ces ports.
 
 **TLS** : par défaut le relais génère un certificat auto-signé. Pour un certificat valide, montez-le dans le conteneur et renseignez `NEXUS_RELAY_CERT` / `NEXUS_RELAY_KEY` avec les chemins internes au conteneur. Ne renseignez jamais `NEXUS_RELAY_ALLOW_INSECURE` en production.
 

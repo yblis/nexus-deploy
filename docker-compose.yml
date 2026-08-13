@@ -62,6 +62,7 @@ services:
       - nexus-branding:/app/branding
       - nexus-applications:/app/applications
       - nexus-uploads:/app/uploads
+      - nexus-filedeploy:/app/filedeploy
     tmpfs:
       - /tmp/nexus-chat:size=100M
     depends_on:
@@ -126,6 +127,7 @@ volumes:
   nexus-branding:
   nexus-applications:
   nexus-uploads:
+  nexus-filedeploy:
 
 networks:
   nexus-net:

@@ -84,6 +84,42 @@ services:
     networks:
       - nexus-net
 
+  # ──────────────────────────────────────────────
+  # Nexus Network Relay (optionnel — profil "relay")
+  # Chemin de secours quand le P2P échoue entre agents
+  # Activation : docker compose --profile relay up -d
+  # ──────────────────────────────────────────────
+  nexus-relay:
+    image: ghcr.io/yblis/nexus-relay:${NEXUS_VERSION:-latest}
+    container_name: nexus-relay
+    restart: unless-stopped
+    profiles:
+      - relay
+    environment:
+      NEXUS_SERVER_URL: ${NEXUS_RELAY_SERVER_URL:-http://nexus-api:8080}
+      NEXUS_RELAY_ID: ${NEXUS_RELAY_ID}
+      NEXUS_RELAY_TOKEN: ${NEXUS_RELAY_TOKEN}
+      NEXUS_RELAY_QUIC_ADDR: ":51821"
+      NEXUS_RELAY_WSS_ADDR: ":8443"
+      NEXUS_RELAY_STUN_ADDR: ":3478"
+      NEXUS_RELAY_CERT: ${NEXUS_RELAY_CERT:-}
+      NEXUS_RELAY_KEY: ${NEXUS_RELAY_KEY:-}
+      NEXUS_ALLOW_INSECURE: ${NEXUS_RELAY_ALLOW_INSECURE:-}
+    ports:
+      - "${NEXUS_RELAY_QUIC_PORT:-51821}:51821/udp"
+      - "${NEXUS_RELAY_STUN_PORT:-3478}:3478/udp"
+      - "${NEXUS_RELAY_WSS_PORT:-8443}:8443/tcp"
+    depends_on:
+      - nexus-api
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "-O", "/dev/null", "https://127.0.0.1:8443/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
 volumes:
   nexus-db-data:
   nexus-tools:

@@ -96,6 +96,29 @@ Pour débloquer davantage d'agents et de fonctionnalités, uploadez un fichier d
 
 Contactez-nous pour obtenir une licence : **contact@gensys.fr*
 
+## Relais Nexus Network (optionnel)
+
+Le relais assure la connectivité entre agents quand la connexion directe P2P échoue (NAT stricts, firewalls). Il est désactivé par défaut.
+
+**Quand l'activer** : si vos agents sont derrière des NAT symétriques ou des firewalls d'entreprise et que les tunnels Nexus Network ne s'établissent pas en direct.
+
+**Activation** :
+
+```bash
+# 1. Dans le dashboard : Administration > Nexus Network > Relais > Ajouter un relais
+#    Récupérez l'ID et le token générés.
+
+# 2. Renseignez NEXUS_RELAY_ID et NEXUS_RELAY_TOKEN dans .env
+
+# 3. Démarrez avec le profil relay
+docker compose --profile relay pull
+docker compose --profile relay up -d
+```
+
+**Firewall** : ouvrez les ports UDP 51821 (QUIC), UDP 3478 (STUN) et TCP 8443 (WSS de secours) vers le serveur.
+
+**TLS** : par défaut le relais génère un certificat auto-signé. Pour un certificat valide, montez-le dans le conteneur et renseignez `NEXUS_RELAY_CERT` / `NEXUS_RELAY_KEY` avec les chemins internes au conteneur. Ne renseignez jamais `NEXUS_RELAY_ALLOW_INSECURE` en production.
+
 ## Sauvegarde
 
 ```bash
@@ -112,6 +135,9 @@ docker exec -i nexus-db psql -U nexus nexus < backup_20260313.sql
 |---|---|---|
 | 3333 | nexus-web | Dashboard (HTTP) |
 | 8090 | nexus-api | Connexion agents (interne) |
+| 51821/udp | nexus-relay | Relais QUIC (profil relay) |
+| 3478/udp | nexus-relay | STUN (profil relay) |
+| 8443/tcp | nexus-relay | Relais WSS de secours (profil relay) |
 
 > **Note** : Le port 8090 est utilisé en interne par les agents pour communiquer avec l'API. Si vous utilisez un reverse proxy, configurez un sous-chemin ou un sous-domaine pour `/api`.
 

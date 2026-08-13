@@ -98,14 +98,17 @@ services:
       - relay
     environment:
       NEXUS_SERVER_URL: ${NEXUS_RELAY_SERVER_URL:-http://nexus-api:8080}
-      NEXUS_RELAY_ID: ${NEXUS_RELAY_ID}
-      NEXUS_RELAY_TOKEN: ${NEXUS_RELAY_TOKEN}
+      NEXUS_RELAY_ID: ${NEXUS_RELAY_ID:-}
+      NEXUS_RELAY_TOKEN: ${NEXUS_RELAY_TOKEN:-}
+      NEXUS_RELAY_ENROLL_KEY: ${NEXUS_RELAY_ENROLL_KEY:-}
       NEXUS_RELAY_QUIC_ADDR: ":51821"
       NEXUS_RELAY_WSS_ADDR: ":8443"
       NEXUS_RELAY_STUN_ADDR: ":3478"
       NEXUS_RELAY_CERT: ${NEXUS_RELAY_CERT:-}
       NEXUS_RELAY_KEY: ${NEXUS_RELAY_KEY:-}
       NEXUS_ALLOW_INSECURE: ${NEXUS_RELAY_ALLOW_INSECURE:-}
+    volumes:
+      - nexus-relay-data:/var/lib/nexus-relay
     ports:
       - "${NEXUS_RELAY_QUIC_PORT:-51821}:51821/udp"
       - "${NEXUS_RELAY_STUN_PORT:-3478}:3478/udp"
@@ -123,6 +126,7 @@ services:
 
 volumes:
   nexus-db-data:
+  nexus-relay-data:
   nexus-tools:
   nexus-branding:
   nexus-applications:

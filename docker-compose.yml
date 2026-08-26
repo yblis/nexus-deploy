@@ -93,6 +93,7 @@ services:
   nexus-relay:
     image: ghcr.io/yblis/nexus-relay:${NEXUS_VERSION:-latest}
     container_name: nexus-relay
+    init: true
     restart: unless-stopped
     profiles:
       - relay
